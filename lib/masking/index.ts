@@ -1,4 +1,4 @@
-import { DetectionMatch } from './detectors';
+import { DetectionMatch } from '../detectors';
 
 export function maskValue(match: DetectionMatch): string {
   const { value, type } = match;
