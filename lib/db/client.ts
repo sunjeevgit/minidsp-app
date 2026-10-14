@@ -3,11 +3,19 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// We create the client but don't throw a hard error at the top level.
-// This prevents the Next.js build process from crashing during static prerendering.
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// To prevent the build from crashing when variables are missing during prerendering,
+// we wrap the client creation in a try-catch or check for values.
+let supabaseClient;
+try {
+  if (supabaseUrl && supabaseAnonKey) {
+    supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+  }
+} catch (e) {
+  console.error('Supabase client initialization failed during build');
+}
 
-// Helper function to verify connection at runtime
+export const supabase = supabaseClient || createClient('', '');
+
 export function verifySupabaseConfig() {
   if (!supabaseUrl || !supabaseAnonKey) {
     console.error('Supabase environment variables are missing!');
