@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { supabase, verifySupabaseConfig } from '../../lib/db/client';
+import { getSupabaseClient, verifySupabaseConfig } from '../../lib/db/client';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
@@ -20,6 +20,7 @@ export default function LoginPage() {
       password,
     });
 
+    const supabase = getSupabaseClient();
     if (!verifySupabaseConfig()) {
       setError('System configuration error. Please contact administrator.');
       setLoading(false);
