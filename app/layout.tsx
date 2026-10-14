@@ -1,4 +1,3 @@
-import './globals.css';
 import { Inter } from 'next/font/google';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -15,6 +14,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-theme="light">
+      <head>
+        <style>{`
+          body {
+            background-color: #f8fafc;
+            color: #0f172a;
+            margin: 0;
+            padding: 0;
+          }
+          .lp-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border-radius: 0.75rem;
+          }
+        `}</style>
+      </head>
       <body className={`${inter.className} bg-slate-50 text-slate-900 min-h-screen flex flex-col`}>
         <nav className="border-b bg-white px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
