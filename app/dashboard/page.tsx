@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { supabase, verifySupabaseConfig } from '../../lib/db/client';
+import { getSupabaseClient, verifySupabaseConfig } from '../../lib/db/client';
 import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
@@ -20,6 +20,7 @@ export default function DashboardPage() {
       return;
     }
 
+    const supabase = getSupabaseClient();
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
       router.push('/login');
@@ -32,13 +33,13 @@ export default function DashboardPage() {
       .eq('user_id', user.id)
       .order('scanned_at', { ascending: false });
 
-
     if (error) console.error(error);
     else setScans(data || []);
     setLoading(false);
   }
 
   async function viewFindings(scanId: string) {
+    const supabase = getSupabaseClient();
     const { data, error } = await supabase
       .from('findings')
       .select('*')
@@ -79,7 +80,6 @@ export default function DashboardPage() {
         </button>
       </div>
 
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm">
           <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Scans</p>
@@ -99,7 +99,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Scans Table */}
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         <table className="w-full text-left border-collapse">
           <thead className="bg-slate-50 border-b border-slate-200">
@@ -144,7 +143,6 @@ export default function DashboardPage() {
         </table>
       </div>
 
-      {/* Findings Detail Modal */}
       {selectedScan && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl max-h-[80vh] overflow-hidden flex flex-col">
