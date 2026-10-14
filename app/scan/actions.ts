@@ -1,6 +1,6 @@
 'use server';
-import { performScan } from '@/lib/scan';
-import { supabase } from '@/lib/db/client';
+import { performScan } from '../../lib/scan';
+import { supabase } from '../../lib/db/client';
 
 export async function uploadAndScan(formData: FormData) {
   const file = formData.get('file') as File;

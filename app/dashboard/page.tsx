@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/db/client';
+import { supabase } from '../../lib/db/client';
 import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
