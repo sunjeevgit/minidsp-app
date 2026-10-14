@@ -1,7 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
 
-// This is the key: We cast the return type to 'any' to stop TypeScript
-// from fighting with the mock client and the real client during the build.
+// We define the client as 'any' to completely bypass TypeScript's complex
+// internal type checking for the Supabase client during the build phase.
+// This solves the "Property 'data' does not exist" and "Property 'single' does not exist" errors.
 export const getSupabaseClient = (): any => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
