@@ -1,6 +1,8 @@
-import { supabase } from '@/lib/db/client';
+import { getSupabaseClient } from '../db/client';
 
 export async function exportScanToCSV(scanId: string) {
+  const supabase = getSupabaseClient();
+
   // 1. Fetch scan and findings for the authenticated user
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Unauthorized');
@@ -23,8 +25,7 @@ export async function exportScanToCSV(scanId: string) {
   if (findingsError) throw new Error('Could not fetch findings');
 
   // 2. Build CSV content
-  // Prevent formula injection by prefixing cells starting with =, +, -, @ with a quote
-  const sanitizeCell = (val: string) => {
+  const sanitizeCell = (val: any) => {
     const s = String(val);
     if (['=', '+', '-', '@'].includes(s.charAt(0))) {
       return `"${s}"`;
@@ -33,7 +34,7 @@ export async function exportScanToCSV(scanId: string) {
   };
 
   const header = ['Scan ID', 'Filename', 'Date', 'Risk', 'PII Type', 'Count', 'Masked Example'];
-  const rows = findings.map(f => [
+  const rows = findings.map((f: any) => [
     sanitizeCell(scan.id),
     sanitizeCell(scan.filename),
     sanitizeCell(scan.scanned_at),
@@ -45,7 +46,7 @@ export async function exportScanToCSV(scanId: string) {
 
   const csvContent = [
     header.join(','),
-    ...rows.map(row => row.join(','))
+    ...rows.map((row: any[]) => row.join(','))
   ].join('\\n');
 
   return {
