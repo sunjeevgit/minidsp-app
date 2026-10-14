@@ -15,19 +15,34 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
+    // 1. Initialize the client FIRST
     const supabase = getSupabaseClient();
+
+    // 2. Verify config
     if (!verifySupabaseConfig()) {
       setError('System configuration error. Please contact administrator.');
       setLoading(false);
       return;
     }
 
-    setLoading(false);
+    try {
+      // 3. Perform the sign-in
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) {
+        setError(authError.message);
+      } else {
+        router.push('/dashboard');
+        router.refresh();
+      }
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
