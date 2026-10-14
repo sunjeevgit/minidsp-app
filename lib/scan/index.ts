@@ -1,6 +1,6 @@
 import { detectEmail, detectUKPhone, detectUKNINO, detectPaymentCard, DetectionMatch, FindingRisk } from '../detectors';
 import { maskValue } from '../masking';
-import { supabase } from '../db/client';
+import { getSupabaseClient } from '../db/client';
 
 export interface ScanResult {
   scanId: string;
@@ -19,6 +19,8 @@ export interface ScanResult {
  * This is a server-side function.
  */
 export async function performScan(userId: string, filename: string, content: string): Promise<ScanResult> {
+  const supabase = getSupabaseClient();
+
   // 1. Validation: Size (1 MiB = 1,048,576 bytes)
   const byteSize = new TextEncoder().encode(content).length;
   if (byteSize === 0) throw new Error('File is empty');
@@ -44,9 +46,6 @@ export async function performScan(userId: string, filename: string, content: str
       };
     }
     aggregates[match.type].count++;
-
-    // Update risk to the highest found for this type if needed
-    // (though in our current detectors, risk is fixed per type)
   });
 
   const riskWeights: Record<FindingRisk | 'None', number> = {
@@ -71,13 +70,11 @@ export async function performScan(userId: string, filename: string, content: str
   });
 
   // 4. Database Persistence (Atomic operation)
-  // We use a transaction-like approach: create scan, then findings.
-
   const { data: scanData, error: scanError } = await supabase
     .from('scans')
     .insert({
       user_id: userId,
-      filename: filename.substring(0, 255), // Sanitize length
+      filename: filename.substring(0, 255),
       risk: highestRisk,
       finding_count: allMatches.length,
     })
@@ -103,7 +100,6 @@ export async function performScan(userId: string, filename: string, content: str
       .insert(findingsToInsert);
 
     if (findingsError) {
-      // Rollback: Delete the scan if findings fail to maintain atomicity
       await supabase.from('scans').delete().eq('id', scanData.id);
       throw new Error(`Database error creating findings: ${findingsError.message}`);
     }
