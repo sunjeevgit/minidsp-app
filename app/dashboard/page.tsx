@@ -20,7 +20,8 @@ export default function DashboardPage() {
       return;
     }
 
-    if (!user) {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
       router.push('/login');
       return;
     }
@@ -30,6 +31,7 @@ export default function DashboardPage() {
       .select('*')
       .eq('user_id', user.id)
       .order('scanned_at', { ascending: false });
+
 
     if (error) console.error(error);
     else setScans(data || []);
