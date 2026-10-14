@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Lepidus Design System Tokens */
+  --lp-color-primary: #1e3a8a; /* Deep Corporate Blue */
+  --lp-color-primary-hover: #1e40af;
+  --lp-color-bg-main: #f8fafc;
+  --lp-color-bg-card: #ffffff;
+  --lp-color-border: #e2e8f0;
+  --lp-color-text-main: #0f172a;
+  --lp-color-text-muted: #64748b;
+  --lp-radius-md: 8px;
+  --lp-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+body {
+  background-color: var(--lp-color-bg-main);
+  color: var(--lp-color-text-main);
+  font-family: 'Inter', sans-serif;
+}
+
+@layer components {
+  .lp-nav {
+    @apply border-b bg-white px-6 py-4 flex justify-between items-center;
+    border-color: var(--lp-color-border);
+  }
+
+  .lp-card {
+    background-color: var(--lp-color-bg-card);
+    border: 1px solid var(--lp-color-border);
+    box-shadow: var(--lp-shadow-sm);
+    border-radius: var(--lp-radius-md);
+    @apply p-6;
+  }
+
+  .lp-button-primary {
+    background-color: var(--lp-color-primary);
+    color: white;
+    border-radius: var(--lp-radius-md);
+    @apply px-4 py-2 font-semibold transition-all hover:bg-indigo-700 disabled:opacity-50;
+  }
+
+  .lp-input {
+    border: 1px solid var(--lp-color-border);
+    border-radius: var(--lp-radius-md);
+    @apply w-full px-4 py-2 outline-none transition-all focus:ring-2 focus:ring-indigo-500;
+  }
+
+  .lp-table-header {
+    @apply bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider;
+  }
+}
