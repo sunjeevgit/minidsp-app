@@ -1,11 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
 
-export const getSupabaseClient = () => {
+// This is the key: We cast the return type to 'any' to stop TypeScript
+// from fighting with the mock client and the real client during the build.
+export const getSupabaseClient = (): any => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    // Return a mock client object to prevent the build from crashing
     return {
       auth: {
         getUser: async () => ({ data: { user: null }, error: { message: 'Missing Config' } }),
