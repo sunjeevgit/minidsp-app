@@ -1,12 +1,14 @@
 'use server';
 import { performScan } from '../../lib/scan';
-import { supabase } from '../../lib/db/client';
+import { getSupabaseClient } from '../../lib/db/client';
 
 export async function uploadAndScan(formData: FormData) {
   const file = formData.get('file') as File;
   if (!file) {
     throw new Error('No file provided');
   }
+
+  const supabase = getSupabaseClient();
 
   // 1. Get current authenticated user
   const { data: { user }, error: authError } = await supabase.auth.getUser();
